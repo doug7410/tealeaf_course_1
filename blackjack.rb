@@ -86,7 +86,8 @@ deck = []
 cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"]
 suits = ["\u2660", "\u2666", "\u2663", "\u2665"]
 deck = cards.product(suits) # create the first deck
-deck.concat(deck).concat(deck) # create the 2nd, 3rd, 4th deck and shffle
+deck.concat(deck).concat(deck) # create the 2nd, 3rd, 4th deck
+deck.shuffle! # shuffle the deck
 
 dealer_hand = [] #start with empty dealer hand
 player_hand = [] #start with empty player hand
