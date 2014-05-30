@@ -20,11 +20,11 @@ total = 0 #start of with 0
     card_value = card.first
     if card_value.to_i > 0 # if the card is a number
       total += card_value
-    elsif card_value == "j" || card_value == "q" || card_value == "k" #if the card is a jack, queen, or king
+    elsif card_value == "J" || card_value == "Q" || card_value == "K" #if the card is a jack, queen, or king
       total += 10
-    elsif card_value == "a" && total > 10
+    elsif card_value == "A" && total > 10
       total += 1
-    elsif card_value == "a" && total <= 10  
+    elsif card_value == "A" && total <= 10  
       total += 11
     end
   end 
@@ -34,18 +34,19 @@ end
 def finish_round(dealer,player)
   if dealer == 21 && player != 21
     puts "Sorry! The dealer wins with blackjack!"
+  elsif player == 21 && dealer != 21
+    puts "Congrats, you have blackjack!"
   elsif dealer > 21
     puts "The dealer bust. You win!"
+  elsif player > 21
+    puts "You bust. Sorry, the dealer wins this one."
   elsif dealer > player
     puts "Sorry! The dealer wins this round."
   elsif dealer < player
     puts "Congrats! You win this round."
-  elsif player == 21 && dealer != 21
-    puts "Congrats, you have blackjack!"
   elsif dealer == player
     puts "It looks like we have a tie"
-  elsif player > 21
-    puts "You bust. Sorry, the dealer wins this one."
+  
   end
 end
 
@@ -73,7 +74,7 @@ end
 cards = []
 suits = []
 deck = []  
-cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, "j", "q", "k", "a"]
+cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"]
 suits = ["\u2660", "\u2666", "\u2663", "\u2665"]
 deck = cards.product(suits).shuffle
 
@@ -144,7 +145,7 @@ if player_action == "stay"
     end
 end
 
-if dealer_total >= 17 && dealer_total < 21
+if dealer_total >= 17 && dealer_total < 21 && player_action == "stay"
   finish_round(dealer_total,player_total)
 end
 
