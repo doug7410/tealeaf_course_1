@@ -31,8 +31,8 @@ total = 0 #start of with 0
   total
 end
 
-def finish_round(dealer,player)
-  if dealer == 21 && player != 21
+def finish_round(dealer,player, dealer_blackjack = false)
+  if dealer == 21 && player != 21 && dealer_blackjack
     puts "Sorry! The dealer wins with blackjack!"
   elsif player == 21 && dealer != 21
     puts "Congrats, you have blackjack!"
@@ -50,17 +50,26 @@ def finish_round(dealer,player)
   end
 end
 
-def display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning)
+def display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning, show_dealer_cards = false)
   system "clear"
   if !returning
-    puts "Nice to meet you #{player_name}! Let's get started. \n\n"
+    puts "Nice to meet you #{player_name}!"
+    puts "Rules: (1) Dealer hits under 17 (2)We are playing with four decks \n\n"
+    puts "Let's get started! \n\n" 
   else
     puts "Hi #{player_name}, welcome back!"
+    puts "Rules: (1) Dealer hits under 17 (2)We are playing with four decks \n\n"
+    puts "Let's get started! \n\n" 
   end
   puts "-------------------------------------"
   puts "Dealer Cards:\n\n" 
-  dealer_hand.map {|card| puts "=> #{card[0]} of #{card[1]}" }
-  puts "\nfor a total of #{dealer_total}\n\n\n"
+  if show_dealer_cards
+    dealer_hand.map {|card| puts "=> #{card[0]} of #{card[1]}" }
+    puts "\nfor a total of #{dealer_total}\n\n\n"
+  else
+    puts "=> #{dealer_hand[0][0]} of #{dealer_hand[0][1]}"
+    puts "=> ########\n\n\n"
+  end
   puts "-------------------------------------"
   puts "#{player_name}'s Cards:\n\n" 
   player_hand.map {|card| puts "=> #{card[0]} of #{card[1]}" }
@@ -76,7 +85,8 @@ suits = []
 deck = []  
 cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"]
 suits = ["\u2660", "\u2666", "\u2663", "\u2665"]
-deck = cards.product(suits).shuffle
+deck = cards.product(suits) # create the first deck
+deck.concat(deck).concat(deck) # create the 2nd, 3rd, 4th deck and shffle
 
 dealer_hand = [] #start with empty dealer hand
 player_hand = [] #start with empty player hand
@@ -98,6 +108,7 @@ display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name,
 
 # player turn
 if player_total == 21
+  display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning,true)
   finish_round(dealer_total, player_total)
 else
   puts "You have #{player_total}. Do you want to hit or stay?"
@@ -115,6 +126,7 @@ else
     player_total = calc_cards(player_hand)
     display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning)
     if player_total == 21 || player_total > 21
+      display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning,true)
       finish_round(dealer_total, player_total)
       break
     else
@@ -133,19 +145,22 @@ end
 
 if player_action == "stay"
   if dealer_total == 21
-    finish_round(dealer_total,player_total)
+    display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning, true)
+    finish_round(dealer_total,player_total, true)
   end
     while dealer_total < 17
     dealer_hand << deck.pop
     dealer_total = calc_cards(dealer_hand)
-    display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning)
+    display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning, true)
       if dealer_total == 21 || dealer_total > 21
+        display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning, true)
         finish_round(dealer_total,player_total)
       end
     end
 end
 
 if dealer_total >= 17 && dealer_total < 21 && player_action == "stay"
+  display_cards(dealer_hand, player_hand, dealer_total, player_total, player_name, returning, true)
   finish_round(dealer_total,player_total)
 end
 
