@@ -1,4 +1,6 @@
 
+# here is a test for github
+
 # CARDS///////////////////////////////////////////////////////////////
 class Card
   attr_accessor :value, :suit, :nice_card
