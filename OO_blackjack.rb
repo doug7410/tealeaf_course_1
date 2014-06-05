@@ -1,16 +1,35 @@
 
 # CARDS///////////////////////////////////////////////////////////////
 class Card
-  attr_accessor :value, :suit
+  attr_accessor :value, :suit, :nice_card
 
   def initialize(v,s)
     @value = v
     @suit = s
+    @nice_card = "
+    -----
+    |#{pretty_value(@value)} | 
+    | #{pretty_suit(@suit)} |
+    -----"
   end
 
-  def to_s
-    "This is a #{@value} of #{suit}"
+  def pretty_suit(suit)
+    case suit
+      when 'H' then "\u2665"
+      when 'D' then "\u2666"
+      when 'S' then "\u2660"
+      when 'C' then "\u2663"  
+    end
   end
+
+  def pretty_value(value)
+    if value != 10
+      " #{value}"
+    else
+      "10"
+    end
+  end
+
 end
 
 # DECK////////////////////////////////////////////////////////////////
@@ -19,7 +38,7 @@ class Deck
 
   def initialize(num_of_decks)
     @cards = []
-    ['Hearts', 'Spades', 'Clubs', 'Diamonds'].each do |suit|
+    ['H', 'S', 'C', 'D'].each do |suit|
       [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'].each do |value|
         @cards << Card.new(value, suit)
       end
@@ -33,7 +52,7 @@ class Deck
   end 
 
   def deal_card
-    @cards.pop
+    cards.pop
   end
 end
 
@@ -53,26 +72,34 @@ class Table
     puts "Rules: (1) Dealer hits under 17 (2)We are playing with four decks \n\n"
     puts "Let's get started! \n\n" 
     puts "-------------------------------------"
-    puts "Dealer Cards:\n\n" 
+    puts "Dealer Cards:\n" 
     
     if !player_stand
-      puts "#{dealer.hand[0].value} of #{dealer.hand[0].suit}" 
-      puts "#######"
+      puts dealer.hand[0].nice_card 
+      puts "
+    -----
+    |***|
+    |***|
+    -----"
     else
+      display = ''
       dealer.hand.each do |card|
-        puts "#{card.value} of #{card.suit}" 
+        display += card.nice_card 
       end
-      puts "\nfor a total of #{dealer.calc_cards(dealer.hand)}\n\n\n"
+      puts display
+      puts "\nfor a total of #{dealer.calc_cards(dealer.hand)}\n"
     end
     
-    puts "\n-------------------------------------\n\n"
-    puts "#{player.name}'s Cards:\n\n" 
+    puts "-------------------------------------\n"
+    puts "#{player.name}'s Cards:\n" 
     
+    display = ''
     player.hand.each do |card|
-      puts "#{card.value} of #{card.suit}" 
+      display += card.nice_card  
     end
+    puts display
     
-    puts "\nfor a total of #{player.calc_cards(player.hand)}\n\n\n"
+    puts "for a total of #{player.calc_cards(player.hand)}\n\n"
     puts "-------------------------------------\n\n"
   end
 end
@@ -80,12 +107,6 @@ end
 
 # HAND////////////////////////////////////////////////////////////////
 module Hand
-
-  def hit(card)
-    @hand << card
-  end
-
-  
 
   def calc_cards(hand)
     @total = 0
@@ -102,6 +123,7 @@ module Hand
     end
     return @total
   end
+
 end
 
 
@@ -139,7 +161,6 @@ end
 
 # BLACKJACK GAME/////////////////////////////////////////////////////
 class Blackjack
-
 
   attr_accessor :deck, :player, :dealer, :table, :game_count
 
@@ -227,25 +248,27 @@ class Blackjack
     
     if player.hand.count == 2 and @player_total == 21
       table.display_cards(true)
-      puts "Blackjack!"
+      puts "You have Blackjack!"
       return 'blackjack'
     elsif @player_total > 21
-      puts "bust"
+      table.display_cards(true)
+      puts "Sorry, you bust. Better luck next time"
       true
     elsif @player_total == 21
-      puts "you win"
+      table.display_cards(true)
+      puts "You win with 21!"
       true
     elsif @player_total >  @dealer_total and @action == 's'
-      puts "you beat the dealer"
+      puts "You beat the dealer. You win!"
       true
     elsif @dealer_total > 21 and @action == 's'
-      puts "dealer bust, you win"
+      puts "The dealer bust. You win!"
       true
     elsif @dealer_total > @player_total and @action == 's'
-      puts "The dealer wins"
+      puts "Sorry, the dealer wins this one, better luck next time."
       true
     elsif @dealer_total == @player_total and @action == 's'
-      puts "tie"
+      puts "It's a push."
       true
     end
 
