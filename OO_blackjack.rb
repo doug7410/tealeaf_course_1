@@ -246,8 +246,8 @@ class Blackjack
   end
 
   def check_bet
-    while player.bet.to_i == 0 || player.bet.to_i > player.chips
-      puts "Please enter a number #{player.chips} or less."
+    while player.bet.to_i <= 0 || player.bet.to_i > player.chips
+      puts "Please enter a number between 1 and #{player.chips} or less."
       player.bet = gets.chomp.to_i
     end   
   end
